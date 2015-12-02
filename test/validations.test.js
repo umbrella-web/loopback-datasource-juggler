@@ -19,6 +19,8 @@ function getValidAttributes() {
 
 describe('validations', function () {
 
+  var User, Entry;
+
   before(function (done) {
     db = getSchema();
     User = db.define('User', {
@@ -34,6 +36,11 @@ describe('validations', function () {
       createdByScript: Boolean,
       updatedAt: Date
     });
+    Entry = db.define('Entry', {
+      id: { type: 'string', id: true, generated: false },
+      name: { type: 'string' }
+    });
+    Entry.validatesUniquenessOf('id');
     db.automigrate(done);
   });
 
@@ -184,6 +191,42 @@ describe('validations', function () {
         });
       });
 
+      it('should ignore errors on upsert by default', function(done) {
+        delete User.validations;
+        User.validatesPresenceOf('name');
+        // It's important to pass an id value, otherwise DAO falls back
+        // to regular create()
+        User.updateOrCreate({ id: 999 }, done);
+      });
+
+      it('should be skipped by upsert when disabled via settings', function(done) {
+        var Customer = User.extend('Customer');
+        Customer.attachTo(db);
+        db.autoupdate(function(err) {
+          if (err) return done(err);
+          Customer.prototype.isValid = function() {
+            throw new Error('isValid() should not be called at all');
+          };
+          Customer.settings.validateUpsert = false;
+          // It's important to pass an id value, otherwise DAO falls back
+          // to regular create()
+          Customer.updateOrCreate({ id: 999 }, done);
+        });
+      });
+
+      it('should work on upsert when enabled via settings', function(done) {
+        delete User.validations;
+        User.validatesPresenceOf('name');
+        User.settings.validateUpsert = true;
+        // It's important to pass an id value, otherwise DAO falls back
+        // to regular create()
+        User.upsert({ id: 999 }, function(err, u) {
+          if (!err) return done(new Error('Validation should have failed.'));
+          err.should.be.instanceOf(ValidationError);
+          done();
+        });
+      });
+
       it('should return error code', function (done) {
         delete User.validations;
         User.validatesPresenceOf('name');
@@ -255,6 +298,24 @@ describe('validations', function () {
       u.name = 1;
       u.isValid().should.not.be.true;
       u.email = 2;
+      u.isValid().should.be.true;
+    });
+
+    it('should reject NaN value as a number', function() {
+      User.validatesPresenceOf('age');
+      var u = new User();
+      u.isValid().should.be.false;
+      u.age = NaN;
+      u.isValid().should.be.false;
+      u.age = 1;
+      u.isValid().should.be.true;
+    });
+
+    it('should allow "NaN" value as a string', function() {
+      User.validatesPresenceOf('name');
+      var u = new User();
+      u.isValid().should.be.false;
+      u.name = 'NaN';
       u.isValid().should.be.true;
     });
 
@@ -381,6 +442,25 @@ describe('validations', function () {
         valid.should.be.true;
         done();
       })).should.be.false;
+    });
+
+    it('should work with id property on create', function (done) {
+      Entry.create({ id: 'entry' }, function(err, entry) {
+        var e = new Entry({ id: 'entry' });
+        Boolean(e.isValid(function (valid) {
+          valid.should.be.false;
+          done();
+        })).should.be.false;
+      });
+    });
+
+    it('should work with id property after create', function (done) {
+      Entry.findById('entry', function(err, e) {
+        Boolean(e.isValid(function (valid) {
+          valid.should.be.true;
+          done();
+        })).should.be.false;
+      });
     });
   });
 

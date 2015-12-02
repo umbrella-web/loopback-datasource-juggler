@@ -1,3 +1,709 @@
+2015-11-27, Version 2.43.0
+==========================
+
+ * Explicitly initialize column of partition by clause and pass it in find()'s options argument (eugene-frb)
+
+ * Fix for issue #774 (Pradeep Kumar Tippa)
+
+ * silence a warning that introduced in bluebird 3.0 (Clark Wang)
+
+ * fixed a bug where an error was sent to the updateAttributesCallback and then ignored (Abe BW)
+
+ * Capture includeHasMany() as a find()'s caller by findCaller option (eugene-frb)
+
+ * UpdateAttributes: Raises an error if database fails (Wilson Júnior)
+
+ * fixes #753 (Joseph M. Persie)
+
+ * typo fix (nennad)
+
+ * Fix foreignKey length issue (nennad)
+
+
+2015-11-23, Version 2.42.0
+==========================
+
+ * Correction of a regression introduced by commit 632898b: when querying an empty array ([]) with a 'neq' filter, there were no matching. (Michael Diguet)
+
+ * dropped unused functions and tests fixed (Wert_Lex)
+
+ * One more comment (Wert_Lex)
+
+ * Looks better now (Wert_Lex)
+
+ * home-written map extended with proper .set() method (Wert_Lex)
+
+ * on the halfway to keeping original keys (Wert_Lex)
+
+ * with updated map which stores original key and tests for them (Wert_Lex)
+
+ * Moved inst initialization to place where it used (Wert_Lex)
+
+ * All tests passed (Wert_Lex)
+
+ * Dirty merge. Tests are broken (Wert_Lex)
+
+ * include utils add. Tests ported to should.js (Wert_Lex)
+
+
+2015-11-17, Version 2.41.2
+==========================
+
+ * Fix the typo (Raymond Feng)
+
+ * fix typo (Clark Wang)
+
+ * fix global leak that mocha complains (Clark Wang)
+
+ * Refer to licenses with a link (Sam Roberts)
+
+
+2015-10-28, Version 2.41.1
+==========================
+
+ * Added missing callback when a model is not found (Federico Rampazzo)
+
+ * Rewrite of variable (mdartic)
+
+ * Filtering relations of a model with an order specified (mdartic)
+
+
+2015-10-07, Version 2.41.0
+==========================
+
+ * Ability to define normalization of undefined query (Ryan Schumacher)
+
+ * findByIds would fail when an array of 0 length was passed as its first argument (James Cooke)
+
+ * Use strongloop conventions for licensing (Sam Roberts)
+
+
+2015-09-11, Version 2.40.1
+==========================
+
+ * Fix the test so that it works across DBs (Raymond Feng)
+
+
+2015-09-10, Version 2.40.0
+==========================
+
+ * Fix id comparision in tests so that they work with mongodb object id (Raymond Feng)
+
+ * Update validations.js (Rand McKinney)
+
+ * Add support for using UUID V4 as defaultFn (Bram Borggreve)
+
+ * primaryKey for hasMany and belongsTo relations (sklyukin)
+
+ * primaryKey to hasOne relation (sklyukin)
+
+ * Add direct copmarison value for array matching (Laurent Villeneuve)
+
+ * Add support for matching array values à la mongo. (Laurent Villeneuve)
+
+ * Fixed ReferencesMany .findById to check the given id in the ids array of the model instance (Satyadeep)
+
+
+2015-08-27, Version 2.39.0
+==========================
+
+ * Optimze automigrate() to cut the test time signicantly (Raymond Feng)
+
+ * Fix primary key checks (Simon Ho)
+
+ * travis: drop 0.6 and 0.8, add iojs (Miroslav Bajtoš)
+
+ * Upgrade Travis to container-based infrastructure (Miroslav Bajtoš)
+
+ * Relax id requirement for basic query operations (Simon Ho)
+
+
+2015-08-18, Version 2.38.0
+==========================
+
+ * Support embedded query in memory connector. Fix memory connector bug (Laurent Villeneuve)
+
+ * Use idEquals when comparing ids in relation definitions (Laurent Villeneuve)
+
+ * Handle possible undefined id (Laurent Villeneuve)
+
+ * Fix id copmarison by using strings (Laurent Villeneuve)
+
+ * Refactor idEquals to utils (Raymond Feng)
+
+
+2015-08-14, Version 2.37.0
+==========================
+
+ * Do not coerce RegExp objects to strings (Simon Ho)
+
+ * Indicate result of destroyById/protototype.destroy (Fabien Franzen)
+
+ * Removed extra ")" (Chris Finn)
+
+ * Fixed typo & added the filter units (Chris Finn)
+
+
+2015-08-05, Version 2.36.0
+==========================
+
+ * Report deferred exceptions via callback (Raymond Feng)
+
+ * fixes issue 673: Include hasMany of relation does not return empty array (Kenta Fried)
+
+
+2015-07-30, Version 2.35.3
+==========================
+
+ * Fix the test case with automigrate (Raymond Feng)
+
+
+2015-07-30, Version 2.35.2
+==========================
+
+ * Fix regexp error for the memory connector (Simon Ho)
+
+
+2015-07-29, Version 2.35.1
+==========================
+
+ * Fix error handling (Raymond Feng)
+
+
+2015-07-29, Version 2.35.0
+==========================
+
+ * Remove test for unused utility function (Simon Ho)
+
+ * Remove try/catch from find function (Simon Ho)
+
+ * Add support for regex operator (Simon Ho)
+
+ * Async 'loaded' hook for find (Pradnya Baviskar)
+
+ * Promisify all 'discover' methods (Pradnya Baviskar)
+
+ * Fix 'persist' hook for updateAttributes() (Pradnya Baviskar)
+
+
+2015-07-22, Version 2.34.0
+==========================
+
+ * Don't enforce strictness if allowExtendedOperators: true (MongoDB) (Fabien Franzen)
+
+ * Take strict: validate and throw settings into account (Fabien Franzen)
+
+ * Filter attributes when strict: true (Fabien Franzen)
+
+
+2015-07-21, Version 2.33.3
+==========================
+
+ * Make sure done() is called within the callback (Raymond Feng)
+
+
+2015-07-18, Version 2.33.2
+==========================
+
+ * Add NOTICE (Raymond Feng)
+
+ * prevent upsert overwriting default values with applyDefaultValues option (Bryan Clark)
+
+ * use fromDb to deserialize data after save in Memory connector (Bryan Clark)
+
+ * Correctly handle validatesUniquenessOf(idName) (Fabien Franzen)
+
+
+2015-07-10, Version 2.33.1
+==========================
+
+ * Fix object merge (Raymond Feng)
+
+
+2015-07-10, Version 2.33.0
+==========================
+
+ * Make sure base property definitions are cloned (Raymond Feng)
+
+
+2015-07-03, Version 2.32.0
+==========================
+
+ * Fix the regression for date conversion (Raymond Feng)
+
+ * Don't cache static scope method results #575 (Fabien Franzen)
+
+
+2015-07-02, Version 2.31.1
+==========================
+
+ * Fix the regexp value for like/nlike (Raymond Feng)
+
+
+2015-07-02, Version 2.31.0
+==========================
+
+ * Assert the existence of instance (Raymond Feng)
+
+ * Make sure operator/options are honored (Raymond Feng)
+
+ * Fix coercion from ObjectID to String (Raymond Feng)
+
+ * Fix #623 - use actual id order (Fabien Franzen)
+
+ * test: fix persistence-hooks failures in MySQL (Miroslav Bajtoš)
+
+ * Includes with transaction support (Rus1)
+
+ * Fix updateOrCreate transaction propagation (Rus1)
+
+ * Fix promise chaining in case of error (Rus1)
+
+ * Promisify 'autoupdate' (Pradnya Baviskar)
+
+ * Add new hook 'loaded' (Pradnya Baviskar)
+
+
+2015-06-16, Version 2.30.1
+==========================
+
+ * Ping async to 1.0.0 to work around context propagation (Raymond Feng)
+
+ * Fix the test case (Raymond Feng)
+
+
+2015-06-16, Version 2.30.0
+==========================
+
+ * Promisify 'automigrate' (Pradnya Baviskar)
+
+ * check object exists before setting __cachedRelations (ningsuhen)
+
+ * Fix the test case as updateAll takes `where` directly (Raymond Feng)
+
+ * Fix for issues #622 & #623 (ningsuhen)
+
+ * Add new hook 'persist' (Pradnya Baviskar)
+
+ * Create a script to describe operation hooks (Miroslav Bajtoš)
+
+ * Allow 0 as the FK (Raymond Feng)
+
+ * fix typo (Clark Wang)
+
+ * Dedupe ids args of inq for include (Raymond Feng)
+
+
+2015-05-29, Version 2.29.2
+==========================
+
+ * Fix the test case (Raymond Feng)
+
+
+2015-05-28, Version 2.29.1
+==========================
+
+ * Update deps (Raymond Feng)
+
+ * Don't silently swallow db errors on validation. (Samuel Reed)
+
+ * adapt coding style @bajtos (mamboer)
+
+ * addressing #603 (Patrick Perini)
+
+ * enhancement on #588 (mamboer)
+
+ * fix issue #587 (mamboer)
+
+ * add test suit for scope - dynamic function (Nemo)
+
+
+2015-05-27, Version 2.29.0
+==========================
+
+ * Enhance the apis and add more tests (Raymond Feng)
+
+ * Fix for https://github.com/strongloop/loopback/issues/1401 (Raymond Feng)
+
+ * Fix ReferenceError: definition is not defined (Dmitry Manannikov)
+
+ * Mix in observer apis to the connector (Raymond Feng)
+
+ * Enhance fieldsToArray to consider strict mode (Raymond Feng)
+
+
+2015-05-20, Version 2.28.1
+==========================
+
+ * Remove dep on sinon (Raymond Feng)
+
+ * Update deps (Raymond Feng)
+
+
+2015-05-18, Version 2.28.0
+==========================
+
+ * Make sure promise is returned (Raymond Feng)
+
+ * Update deps to loopback-connector (Raymond Feng)
+
+ * Fix comments (Raymond Feng)
+
+ * Enable docs (Raymond Feng)
+
+ * Add an optional `options` argument to relation methods (Raymond Feng)
+
+ * Add transaction apis (Raymond Feng)
+
+ * Refactor the observer functions into a plugin (Raymond Feng)
+
+ * Add transaction (Raymond Feng)
+
+
+2015-05-16, Version 2.27.1
+==========================
+
+ * Make sure relation scope is applied during include (Raymond Feng)
+
+ * Updated JSdoc for Datasource constructor (crandmck)
+
+
+2015-05-13, Version 2.27.0
+==========================
+
+ * Fix the target id resolution (Raymond Feng)
+
+ * DB Call Optimization in relation includes - Fixes #408 & #166 (ningsuhen)
+
+ * Conditionally pass options to connector CRUD methods (Raymond Feng)
+
+ * Pass-through options from save to create (Fabien Franzen)
+
+
+2015-05-05, Version 2.26.4
+==========================
+
+ * dao: support validateUpsert:false (Miroslav Bajtoš)
+
+ * Changes to API docs per Dennis (Rand McKinney)
+
+ * Add unit-test for "array" type (Miroslav Bajtoš)
+
+
+2015-04-24, Version 2.26.3
+==========================
+
+ * Fix the test cases (Raymond Feng)
+
+ * Add support for merging include filters (ningsuhen)
+
+ * add test case for hasmanythrough bi-drectional relations (ningsuhen)
+
+ * Fix for bug - https://github.com/strongloop/loopback-datasource-juggler/issues/571 (ningsuhen)
+
+
+2015-04-24, Version 2.26.2
+==========================
+
+ * Allow leading slash for `path` in model settings (Raymond Feng)
+
+
+2015-04-22, Version 2.26.1
+==========================
+
+ * validations: treat `NaN` as a blank value (Miroslav Bajtoš)
+
+
+2015-04-22, Version 2.26.0
+==========================
+
+ * Allow custom name mapping for discovered models (Raymond Feng)
+
+
+2015-04-17, Version 2.25.1
+==========================
+
+ * Validate model on updateOrCreate (upsert). (Miroslav Bajtoš)
+
+
+2015-04-16, Version 2.25.0
+==========================
+
+ * Extend findById to accept an optional filter object (Raymond Feng)
+
+
+2015-04-14, Version 2.24.0
+==========================
+
+ * Add new strict mode "validate" (Miroslav Bajtoš)
+
+ * Promisify model relation methods (Partap Davis)
+
+ * Deprecate property names containing a dot (Miroslav Bajtoš)
+
+ * Allow nesting properties to be queried for memory connector (Raymond Feng)
+
+
+2015-04-01, Version 2.23.0
+==========================
+
+ * Fix test for "after save" called on save/CREATE (Miroslav Bajtoš)
+
+ * Code cleanup in lib/dao.js (Miroslav Bajtoš)
+
+ * Save parent model of embedded relations (Fabien Franzen)
+
+ * Pass options in operation hooks context. (Fabien Franzen)
+
+ * check if id does not exist a bit more explicitly (Pulkit Singhal)
+
+ * Fix persistUndefinedAsNull tests w/ SQL connectors (Miroslav Bajtoš)
+
+ * Implement scope.updateAll (Fabien Franzen)
+
+ * Fix the test cases so that they be run with the mssql connector (Raymond Feng)
+
+ * Add model setting "persistUndefinedAsNull" (Miroslav Bajtoš)
+
+ * Add abilities to remove and clear observers - Operation Hooks. (0angelic0)
+
+
+2015-03-27, Version 2.22.0
+==========================
+
+ * Code cleanup in updateAll/deleteAll (Miroslav Bajtoš)
+
+ * Return scope object from DAO.scope (Fabien Franzen)
+
+ * Remove all usages of lodash. (Miroslav Bajtoš)
+
+ * Clean up delete and update tests (Simon Ho)
+
+ * Clean up wording in update/delete tests (Simon Ho)
+
+ * Fix wording in update test (Simon Ho)
+
+ * Properly support embedsMany destroyAll (Fabien Franzen)
+
+ * Clean up update/delete manipulation tests (Simon Ho)
+
+ * test: fix test failure in MySQL connector (Miroslav Bajtoš)
+
+ * Improve test failure messages (Miroslav Bajtoš)
+
+ * Fix regression in prototype.save (Miroslav Bajtoš)
+
+ * Enable more CRUD remoting methods for embedsOne (Fabien Franzen)
+
+ * Implement scope.findOne (Fabien Franzen)
+
+ * use findOrCreate for HasManyThrough#create (Clark Wang)
+
+ * Enhance id comparision for updateAttributes (Raymond Feng)
+
+ * Enable custom methods on singular relations (Fabien Franzen)
+
+ * Implement scope.findById (Fabien Franzen)
+
+ * Fix updateAll callback in "transient" connector (Miroslav Bajtoš)
+
+ * Memory connector returns updated records count (Simon Ho)
+
+ * Add ctx.isNewInstance for "save" hooks (Miroslav Bajtoš)
+
+ * deleteAll returns number of deleted records (Miroslav Bajtoš)
+
+ * Use the correct way to iterate over an array (Raymond Feng)
+
+ * DAO: Fix updateOrCreate to set persisted:true (Miroslav Bajtoš)
+
+ * Reject CREATE with a duplicate id (Miroslav Bajtoš)
+
+ * add tests for between in memory connector (Daniel B. Vasquez)
+
+ * enable between filter for memory db connector (Daniel B. Vasquez)
+
+ * fix #429 Multiple Models can't mixin same class (Clark Wang)
+
+
+2015-03-16, Version 2.21.0
+==========================
+
+ * Fix the test case so that at least one property is to be changed (Raymond Feng)
+
+ * Make sure id properties cannot be changed (Raymond Feng)
+
+
+2015-03-12, Version 2.20.0
+==========================
+
+ * Remove trailing spaces. (Miroslav Bajtoš)
+
+ * Improve instance-level operation hooks (Fabien Franzen)
+
+ * Fix the test case (Raymond Feng)
+
+ * fix foreign key dataType bug (didikeke)
+
+ * Reformat notifyObserversOf context argument (Fabien Franzen)
+
+ * Implement operation hooks' context (Fabien Franzen)
+
+ * Allow submodel to hide base properties (Raymond Feng)
+
+
+2015-03-04, Version 2.19.2
+==========================
+
+ * Improved and corrected API docs (crandmck)
+
+ * Fix problems in annotations that prvented validateAsync and validate functions from appearing in API docs. (crandmck)
+
+
+2015-03-03, Version 2.19.1
+==========================
+
+ * Make sure inclusion filter is applied to the target model (Raymond Feng)
+
+
+2015-03-02, Version 2.19.0
+==========================
+
+ * Deprecate DAO events (Miroslav Bajtoš)
+
+ * Deprecate Model hooks (Miroslav Bajtoš)
+
+ * Add Promises to DAO (Partap Davis)
+
+ * test for updateAll (rudzon)
+
+ * enhance the coercion for boolean/date types (rudzon)
+
+ * enhance updateAll to coerce the data per property definitions (rudzon)
+
+ * relation-definition: remove trailing whitespace (Miroslav Bajtoš)
+
+
+2015-02-20, Version 2.18.1
+==========================
+
+ * Make sure models are migrated to avoid conflicts (Raymond Feng)
+
+ * Add err checks (Raymond Feng)
+
+ * Fix findByIds test cases (Raymond Feng)
+
+
+2015-02-20, Version 2.18.0
+==========================
+
+ * Fix the idType so that it works with both MongoDB and RDBs (Raymond Feng)
+
+ * Tidy up tests so that they will work with RDBs (Raymond Feng)
+
+ * Fix JS style issues (Raymond Feng)
+
+ * Add a new property option `defaultFn` (Miroslav Bajtoš)
+
+ * Fix the null/undefined check (Raymond Feng)
+
+ * Fix createdAt type so that it won't overflow SQL server int (Raymond Feng)
+
+ * ModelBaseClass: promise mode for notifyObserversOf (Miroslav Bajtoš)
+
+ * ModelBaseClass: support promise-based observers (Miroslav Bajtoš)
+
+ * use lodash to update the findBelongsTo which now returns an array of matches (Bryan Clark)
+
+ * Add $now as shortcut default value for date property (Pradnya Baviskar)
+
+ * Fix `deleteById(id)` and other test failures (Miroslav Bajtoš)
+
+
+2015-02-11, Version 2.17.0
+==========================
+
+ * Add an optional `options` argument to all CRUD methods (Raymond Feng)
+
+ * Upgrade deps (Raymond Feng)
+
+ * Remove workaround for perfomance degradation (Denis Bardadym)
+
+ * Change equal to eql to support mongodb ObjectID (Raymond Feng)
+
+ * Enhance the coercion for boolean/date types (Raymond Feng)
+
+ * Make sure base properties/settings are merged into the submodel (Raymond Feng)
+
+ * support optimized findOrCreate (Clark Wang)
+
+ * Fix the perf around should.not.equal for complex objects (Raymond Feng)
+
+ * testcase for #420 (Andrey Loukhnov)
+
+ * use findOrCreate in hasOne#create (Clark Wang)
+
+ * Create model foreign key matching type of opposite part of relation (even if it has a custom field type) (Andrey Loukhnov)
+
+ * minor formatting issues (trailing spaces and such) and .editorconfig (Andrey Loukhnov)
+
+
+2015-02-05, Version 2.16.0
+==========================
+
+ * Return 400 when client provides an incorrect value (Pradnya Baviskar)
+
+ * Relax "id" checks in test/manipulation.test.js (Miroslav Bajtoš)
+
+ * Fix typo (Raymond Feng)
+
+ * test: undefined property values are preserved (Miroslav Bajtoš)
+
+ * Remove undefined properties for create (Raymond Feng)
+
+ * Update to `should` to the latest version 4.6.3 (Miroslav Bajtoš)
+
+ * Relax the id equality test for mongodb object ids (Raymond Feng)
+
+
+2015-02-02, Version 2.15.0
+==========================
+
+ * Fix id type issue for update (Raymond Feng)
+
+ * Rename hook "query" to "access" (Miroslav Bajtoš)
+
+ * Implement intent hook `before delete` (Miroslav Bajtoš)
+
+ * Remove redundant `.toObject()` call from `upsert` (Miroslav Bajtoš)
+
+ * Fix regression in `.save()` from 1fd6eff1 (Miroslav Bajtoš)
+
+ * Fix hasOne remoting (Raymond Feng)
+
+ * Make sure batch create calls back with correct data (Raymond Feng)
+
+ * Intent-based hooks for persistence (Miroslav Bajtoš)
+
+ * ModelBaseClass: implement async observe/notify (Miroslav Bajtoš)
+
+ * Upgrade `should` to the latest 1.x version (Miroslav Bajtoš)
+
+ * Fixed nullCheck in validations to correct behavior when dealing with undefined attributes (James Billingham)
+
+ * Supply target to applyProperties function (Fabien Franzen)
+
+ * fix id property for composite ids (Clark Wang)
+
+ * fix id properties should sort by its index (Clark Wang)
+
+ * Fixed typos and logic for protected properties (Christian Enevoldsen)
+
+ * adds support for protected properties. (Christian Enevoldsen)
+
+ * support embeds data for belongsTo relation Signed-off-by: Clark Wang <clark.wangs@gmail.com> (Clark Wang)
+
+
 2015-01-15, Version 2.14.1
 ==========================
 
@@ -455,18 +1161,15 @@
 
  * Cleanup mixin tests (Fabien Franzen)
 
- * Fix a name conflict in scope metadata (Raymond Feng)
-
-
-2014-08-08, Version 2.3.0
-=========================
-
-
 
 2014-08-08, Version 2.3.1
 =========================
 
  * Fix a name conflict in scope metadata (Raymond Feng)
+
+
+2014-08-08, Version 2.3.0
+=========================
 
  * Fix the test case so that it works with other DBs (Raymond Feng)
 
@@ -580,8 +1283,6 @@
 
  * Implemented embedsMany relation (Fabien Franzen)
 
- * Fix a regression where undefined id should not match any record (Raymond Feng)
-
  * Minor tweaks; pass-through properties/scope for hasAndBelongsToMany (Fabien Franzen)
 
  * Implemented polymorphic hasMany through inverse (Fabien Franzen)
@@ -597,17 +1298,18 @@
  * Implemented polymorphic hasMany (Fabien Franzen)
 
 
-2014-07-27, Version 2.1.0
-=========================
-
-
-
 2014-07-27, Version 2.1.1
 =========================
 
  * Bump version (Raymond Feng)
 
  * Fix a regression where undefined id should not match any record (Raymond Feng)
+
+
+2014-07-27, Version 2.1.0
+=========================
+
+ * Bump version (Raymond Feng)
 
  * datasource: support connectors without `getTypes` (Miroslav Bajtoš)
 
@@ -618,56 +1320,6 @@
  * Added test for belongsTo scope/properties (Fabien Franzen)
 
  * Implement scope/properties for BelongsTo (+ fix foreign key matching) (Fabien Franzen)
-
- * add support for disabling relationship includes (Jaka Hudoklin)
-
- * add support for relationship options (Jaka Hudoklin)
-
- * Expose base model class as `base` property (Raymond Feng)
-
- * Move relation remoting to loopback (Raymond Feng)
-
- * Add missing inflection dep back (Raymond Feng)
-
- * 2.0.0-beta2 (Miroslav Bajtoš)
-
- * validations: support non-V8 browsers (Miroslav Bajtoš)
-
- * Remove remoting metadata (Raymond Feng)
-
- * Fix the forEach closure (Raymond Feng)
-
- * ModelBuilder: add `prototype.defineValueType` (Miroslav Bajtoš)
-
- * Replace connector base with loopback-connector (Miroslav Bajtoš)
-
- * Remove unsupported connectors (Miroslav Bajtoš)
-
- * 2.0.0-beta1 (Ritchie Martori)
-
- * Keep undefined/null values for the array type (Raymond Feng)
-
- * Remove JSDocs for scopeMethods.add(acInst) and scopeMethods.remove(acInst) (crandmck)
-
- * Copy info from api-model.md to JSDoc (crandmck)
-
- * !fixup Remove additional remoting (Ritchie Martori)
-
- * !fixup Require ._delegate for fn override (Ritchie Martori)
-
- * Remove relation remoting (Ritchie Martori)
-
- * Remove remoting metadata (Ritchie Martori)
-
-
-2014-07-24, Version 1.7.2
-=========================
-
- * relation: add `scope._target` for `hasOne` (Miroslav Bajtoš)
-
- * Bump version (Raymond Feng)
-
- * Expose base model class as `base` property (Raymond Feng)
 
 
 2014-07-22, Version 2.0.0
@@ -909,39 +1561,7 @@
 
  * JSDoc improvements (Rand McKinney)
 
- * Keep undefined/null values for the array type (Raymond Feng)
-
- * Remove JSDocs for scopeMethods.add(acInst) and scopeMethods.remove(acInst) (crandmck)
-
- * Copy info from api-model.md to JSDoc (crandmck)
-
  * validations: include more details in `err.message` (Miroslav Bajtoš)
-
- * Add a path to show customer.orders(query, cb) (Raymond Feng)
-
- * Add support for logical operator (AND/OR) (Raymond Feng)
-
-
-2014-05-27, Version 1.5.3
-=========================
-
- * Bump version (Raymond Feng)
-
- * Keep undefined/null values for the array type (Raymond Feng)
-
- * Remove JSDocs for scopeMethods.add(acInst) and scopeMethods.remove(acInst) (crandmck)
-
- * Copy info from api-model.md to JSDoc (crandmck)
-
- * validations: include more details in `err.message` (Miroslav Bajtoš)
-
- * !fixup Remove additional remoting (Ritchie Martori)
-
- * !fixup Require ._delegate for fn override (Ritchie Martori)
-
- * Remove relation remoting (Ritchie Martori)
-
- * Remove remoting metadata (Ritchie Martori)
 
 
 2014-05-27, Version 1.5.4
@@ -1440,12 +2060,12 @@
  * Update LDL doc for the strict mode (Raymond Feng)
 
 
-2013-09-12, Version strongloopsuite-1.0.0-5
+2013-09-12, Version strongloopsuite-1.0.0-4
 ===========================================
 
 
 
-2013-09-12, Version strongloopsuite-1.0.0-4
+2013-09-12, Version strongloopsuite-1.0.0-5
 ===========================================
 
  * Allow connector to report failure during initialization (Raymond Feng)

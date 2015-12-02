@@ -25,17 +25,17 @@ describe('ModelBuilder define model', function () {
       return this.name + ', ' + this.age;
     };
 
-    modelBuilder.models.should.be.a('object').and.have.property('User', User);
-    modelBuilder.definitions.should.be.a('object').and.have.property('User');
+    modelBuilder.models.should.be.type('object').and.have.property('User').exactly(User);
+    modelBuilder.definitions.should.be.type('object').and.have.property('User');
 
     var user = new User({name: 'Joe', age: 20, xyz: false});
 
     User.modelName.should.equal('User');
-    user.should.be.a('object').and.have.property('name', 'Joe');
+    user.should.be.type('object').and.have.property('name', 'Joe');
     user.should.have.property('name', 'Joe');
     user.should.have.property('age', 20);
     user.should.have.property('xyz', false);
-    user.should.not.have.property('bio');
+    user.should.have.property('bio', undefined);
     done(null, User);
   });
 
@@ -47,12 +47,12 @@ describe('ModelBuilder define model', function () {
     var user = new User({name: 'Joe', age: 20});
 
     User.modelName.should.equal('User');
-    user.should.be.a('object');
+    user.should.be.type('object');
     user.should.have.property('name', 'Joe');
     user.should.not.have.property('age');
     user.toObject().should.not.have.property('age');
     user.toObject(true).should.not.have.property('age');
-    user.should.not.have.property('bio');
+    user.should.have.property('bio', undefined);
     done(null, User);
   });
 
@@ -102,7 +102,7 @@ describe('ModelBuilder define model', function () {
     var user = new User({name: 'Joe', age: 20});
 
     User.modelName.should.equal('User');
-    user.should.be.a('object').and.have.property('name', 'Joe');
+    user.should.be.type('object').and.have.property('name', 'Joe');
     user.should.have.property('name', 'Joe');
     user.should.have.property('age', 20);
     user.should.not.have.property('bio');
@@ -142,7 +142,7 @@ describe('ModelBuilder define model', function () {
     var user = new User({name: 'Joe', age: 20});
 
     User.modelName.should.equal('User');
-    user.should.be.a('object').and.have.property('name', 'Joe');
+    user.should.be.type('object').and.have.property('name', 'Joe');
     user.should.have.property('name', 'Joe');
     user.should.have.property('age', 20);
     user.should.not.have.property('bio');
@@ -180,8 +180,8 @@ describe('ModelBuilder define model', function () {
       return this.name + ', ' + this.age;
     };
 
-    modelBuilder.models.should.be.a('object').and.have.property('User', User);
-    modelBuilder.definitions.should.be.a('object').and.have.property('User');
+    modelBuilder.models.should.be.type('object').and.have.property('User', User);
+    modelBuilder.definitions.should.be.type('object').and.have.property('User');
 
     var user = new User({
       name: 'Joe', age: 20,
@@ -193,10 +193,10 @@ describe('ModelBuilder define model', function () {
     });
 
     User.modelName.should.equal('User');
-    user.should.be.a('object').and.have.property('name', 'Joe');
+    user.should.be.type('object').and.have.property('name', 'Joe');
     user.should.have.property('name', 'Joe');
     user.should.have.property('age', 20);
-    user.should.not.have.property('bio');
+    user.should.have.property('bio', undefined);
     user.should.have.property('address');
     user.address.should.have.property('city', 'San Jose');
     user.address.should.have.property('state', 'CA');
@@ -236,11 +236,24 @@ describe('ModelBuilder define model', function () {
 
     User.modelName.should.equal('User');
     User.definition.properties.address.should.have.property('type', Address);
-    user.should.be.a('object');
+    user.should.be.type('object');
     assert(user.name === 'Joe');
     user.address.should.have.property('city', 'San Jose');
     user.address.should.have.property('state', 'CA');
     done(null, User);
+  });
+
+  it('should define an id property for composite ids', function () {
+    var modelBuilder = new ModelBuilder();
+    var Follow = modelBuilder.define('Follow', {
+      followerId: { type: String, id: 1 },
+      followeeId: { type: String, id: 2 },
+      followAt: Date
+    });
+    var follow = new Follow({ followerId: 1, followeeId: 2 });
+
+    follow.should.have.property('id');
+    assert.deepEqual(follow.id, { followerId: 1, followeeId: 2 });
   });
 
 });
@@ -419,7 +432,7 @@ describe('DataSource define model', function () {
     User.create({name: 'Joe', age: 20}, function (err, user) {
 
       User.modelName.should.equal('User');
-      user.should.be.a('object');
+      user.should.be.type('object');
       assert(user.name === 'Joe');
       assert(user.age === undefined);
       assert(user.toObject().age === undefined);
@@ -443,6 +456,17 @@ describe('DataSource define model', function () {
     done(null, User);
   });
 
+  describe('strict mode "validate"', function() {
+    it('should report validation error for unknown properties', function() {
+      var ds = new DataSource('memory');
+      var User = ds.define('User', { name: String }, { strict: 'validate' });
+      var user = new User({ name: 'Joe', age: 20 });
+      user.isValid().should.be.false;
+      var codes = user.errors && user.errors.codes || {};
+      codes.should.have.property('age').eql(['unknown-property']);
+    });
+  });
+
   it('should be able to define open models', function (done) {
     var ds = new DataSource('memory');
 
@@ -451,13 +475,13 @@ describe('DataSource define model', function () {
 
     User.create({name: 'Joe', age: 20}, function (err, user) {
 
-      user.should.be.a('object').and.have.property('name', 'Joe');
+      user.should.be.type('object').and.have.property('name', 'Joe');
       user.should.have.property('name', 'Joe');
       user.should.have.property('age', 20);
       user.should.not.have.property('bio');
 
       User.findById(user.id, function (err, user) {
-        user.should.be.a('object').and.have.property('name', 'Joe');
+        user.should.be.type('object').and.have.property('name', 'Joe');
         user.should.have.property('name', 'Joe');
         user.should.have.property('age', 20);
         user.should.not.have.property('bio');
@@ -474,7 +498,7 @@ describe('DataSource define model', function () {
     User.create({name: 'Joe', age: 20}, function (err, user) {
 
       User.modelName.should.equal('User');
-      user.should.be.a('object').and.have.property('name', 'Joe');
+      user.should.be.type('object').and.have.property('name', 'Joe');
       user.should.have.property('name', 'Joe');
       user.should.have.property('age', 20);
       user.should.not.have.property('bio');
@@ -491,7 +515,7 @@ describe('DataSource define model', function () {
     var user = new User({name: 'Joe', age: 20});
 
     User.modelName.should.equal('User');
-    user.should.be.a('object');
+    user.should.be.type('object');
     assert(user.name === 'Joe');
     assert(user.age === undefined);
     assert(user.toObject().age === undefined);
@@ -537,7 +561,7 @@ describe('DataSource define model', function () {
     var user = new User({name: 'Joe', age: 20}, {strict: false});
 
     user.should.have.property('__strict', false);
-    user.should.be.a('object');
+    user.should.be.type('object');
     user.should.have.property('name', 'Joe');
     user.should.have.property('age', 20);
     user.toObject().should.have.property('age', 20);
@@ -609,12 +633,21 @@ describe('DataSource define model', function () {
 
     done();
   });
-  
+
   it('should allow an explicit remoting path', function () {
     var ds = new DataSource('memory');
-    
-    var User = ds.define('User', {name: String, bio: String}, { 
+
+    var User = ds.define('User', {name: String, bio: String}, {
       http: { path: 'accounts' }
+    });
+    User.http.path.should.equal('/accounts');
+  });
+
+  it('should allow an explicit remoting path with leading /', function () {
+    var ds = new DataSource('memory');
+
+    var User = ds.define('User', {name: String, bio: String}, {
+      http: { path: '/accounts' }
     });
     User.http.path.should.equal('/accounts');
   });
@@ -639,13 +672,64 @@ describe('Load models with base', function () {
     assert(Customer.prototype.instanceMethod === User.prototype.instanceMethod);
     assert.equal(Customer.base, User);
     assert.equal(Customer.base, Customer.super_);
-    
+
     try {
       var Customer1 = ds.define('Customer1', {vip: Boolean}, {base: 'User1'});
     } catch (e) {
       assert(e);
     }
   });
+
+  it('should inherit properties from base option', function () {
+    var ds = new ModelBuilder();
+
+    var User = ds.define('User', {name: String});
+
+    var Customer = ds.define('Customer', {vip: Boolean}, {base: 'User'});
+
+    Customer.definition.properties.should.have.property('name');
+    Customer.definition.properties.name.should.have.property('type', String);
+  });
+
+  it('should inherit properties by clone from base option', function () {
+    var ds = new ModelBuilder();
+
+    var User = ds.define('User', {name: String});
+
+    var Customer1 = ds.define('Customer1', {vip: Boolean}, {base: 'User'});
+    var Customer2 = ds.define('Customer2', {vip: Boolean}, {base: 'User'});
+
+    Customer1.definition.properties.should.have.property('name');
+    Customer2.definition.properties.should.have.property('name');
+    Customer1.definition.properties.name.should.not.be.equal(
+      Customer2.definition.properties.name);
+    Customer1.definition.properties.name.should.eql(
+      Customer2.definition.properties.name);
+  });
+
+  it('should revert properties from base model', function() {
+    var ds = new ModelBuilder();
+
+    var User = ds.define('User', {username: String, email: String});
+
+    var Customer = ds.define('Customer',
+      {name: String, username: null, email: false},
+      {base: 'User'});
+
+    Customer.definition.properties.should.have.property('name');
+    // username/email are now shielded
+    Customer.definition.properties.should.not.have.property('username');
+    Customer.definition.properties.should.not.have.property('email');
+    var c = new Customer({name: 'John'});
+    c.should.have.property('username', undefined);
+    c.should.have.property('email', undefined);
+    c.should.have.property('name', 'John');
+    var u = new User({username: 'X', email: 'x@y.com'});
+    u.should.not.have.property('name');
+    u.should.have.property('username', 'X');
+    u.should.have.property('email', 'x@y.com');
+  });
+
 
   it('should set up base class via parent arg', function () {
     var ds = new ModelBuilder();
@@ -658,6 +742,9 @@ describe('Load models with base', function () {
     };
 
     var Customer = ds.define('Customer', {vip: Boolean}, {}, User);
+
+    Customer.definition.properties.should.have.property('name');
+    Customer.definition.properties.name.should.have.property('type', String);
 
     assert(Customer.prototype instanceof User);
     assert(Customer.staticMethod === User.staticMethod);
@@ -936,37 +1023,37 @@ describe('Load models with relations', function () {
     assert(Post.relations['user']);
     done();
   });
-  
+
   it('should set up referencesMany relations', function (done) {
     var ds = new DataSource('memory');
-  
+
     var Post = ds.define('Post', {userId: Number, content: String});
     var User = ds.define('User', {name: String}, {relations: {posts: {type: 'referencesMany', model: 'Post'}}});
-  
+
     assert(User.relations['posts']);
     done();
   });
-  
+
   it('should set up embedsMany relations', function (done) {
     var ds = new DataSource('memory');
-  
+
     var Post = ds.define('Post', {userId: Number, content: String});
     var User = ds.define('User', {name: String}, {relations: {posts: {type: 'embedsMany', model: 'Post' }}});
-  
+
     assert(User.relations['posts']);
     done();
   });
-  
+
   it('should set up polymorphic relations', function (done) {
     var ds = new DataSource('memory');
-  
+
     var Author = ds.define('Author', {name: String}, {relations: {
       pictures: {type: 'hasMany', model: 'Picture', polymorphic: 'imageable'}
     }});
     var Picture = ds.define('Picture', {name: String}, {relations: {
       imageable: {type: 'belongsTo', polymorphic: true}
     }});
-    
+
     assert(Author.relations['pictures']);
     assert.deepEqual(Author.relations['pictures'].toJSON(), {
       name: 'pictures',
@@ -976,13 +1063,13 @@ describe('Load models with relations', function () {
       modelTo: 'Picture',
       keyTo: 'imageableId',
       multiple: true,
-      polymorphic: { 
+      polymorphic: {
         as: 'imageable',
         foreignKey: 'imageableId',
         discriminator: 'imageableType'
       }
     });
-    
+
     assert(Picture.relations['imageable']);
     assert.deepEqual(Picture.relations['imageable'].toJSON(), {
       name: 'imageable',
@@ -992,7 +1079,7 @@ describe('Load models with relations', function () {
       modelTo: '<polymorphic>',
       keyTo: 'id',
       multiple: false,
-      polymorphic: { 
+      polymorphic: {
         as: 'imageable',
         foreignKey: 'imageableId',
         discriminator: 'imageableType'
@@ -1000,7 +1087,7 @@ describe('Load models with relations', function () {
     });
     done();
   });
-  
+
   it('should set up foreign key with the correct type', function (done) {
     var ds = new DataSource('memory');
 
@@ -1198,6 +1285,18 @@ describe('DataAccessObject', function () {
     assert.deepEqual(where, {id: '1'});
     where = model._coerce({id: '1'});
     assert.deepEqual(where, {id: '1'});
+
+    // Mockup MongoDB ObjectID
+    function ObjectID(id) {
+      this.id = id;
+    }
+
+    ObjectID.prototype.toString = function() {
+      return this.id;
+    };
+
+    where = model._coerce({id: new ObjectID('1')});
+    assert.deepEqual(where, {id: '1'});
   });
 
   it('should be able to coerce where clause for number types', function () {
@@ -1388,6 +1487,22 @@ describe('DataAccessObject', function () {
     assert.deepEqual(filter, {limit: 100, offset: 5, skip: 5});
   });
 
+  it('should apply settings for handling undefined', function () {
+    filter = model._normalize({filter: { x: undefined }});
+    assert.deepEqual(filter, {filter: {}});
+
+    ds.settings.normalizeUndefinedInQuery = 'ignore';
+    filter = model._normalize({filter: { x: undefined }});
+    assert.deepEqual(filter, {filter: {}}, 'Should ignore undefined');
+
+    ds.settings.normalizeUndefinedInQuery = 'nullify';
+    filter = model._normalize({filter: { x: undefined }});
+    assert.deepEqual(filter, {filter: { x: null }}, 'Should nullify undefined');
+
+    ds.settings.normalizeUndefinedInQuery = 'throw';
+    (function(){ model._normalize({filter: { x: undefined }}) }).should.throw(/`undefined` in query/);
+  });
+
   it('should skip GeoPoint', function () {
     where = model._coerce({location: {near: {lng: 10, lat: 20}, maxDistance: 20}});
     assert.deepEqual(where, {location: {near: {lng: 10, lat: 20}, maxDistance: 20}});
@@ -1413,6 +1528,20 @@ describe('DataAccessObject', function () {
     function () {
       where = model._coerce({age: {inq: ['xyz', '12']}});
       assert.deepEqual(where, {age: {inq: ['xyz', 12]}});
+    });
+
+  // settings
+  it('should get settings in priority',
+    function () {
+      ds.settings.test = 'test';
+      assert.equal(model._getSetting('test'), ds.settings.test, 'Should get datasource setting');
+      ds.settings.test = undefined;
+
+      model.settings.test = 'test';
+      assert.equal(model._getSetting('test'), model.settings.test, 'Should get model settings');
+
+      ds.settings.test = 'willNotGet';
+      assert.notEqual(model._getSetting('test'), ds.settings.test, 'Should not get datasource setting');
     });
 
 });
@@ -1520,11 +1649,11 @@ describe('Load models from json', function () {
 
     var customer = new Customer({name: 'Joe', age: 20, customerId: 'c01'});
 
-    customer.should.be.a('object').and.have.property('name', 'Joe');
+    customer.should.be.type('object').and.have.property('name', 'Joe');
     customer.should.have.property('name', 'Joe');
     customer.should.have.property('age', 20);
     customer.should.have.property('customerId', 'c01');
-    customer.should.not.have.property('bio');
+    customer.should.have.property('bio', undefined);
 
     // The properties are defined at prototype level
     assert.equal(Object.keys(customer).filter(function (k) {
@@ -1633,7 +1762,8 @@ describe('Load models from json', function () {
           model: 'Order'
         }
       },
-      strict: false
+      strict: false,
+      base: User
     });
 
     done();
@@ -1696,4 +1826,3 @@ describe('ModelBuilder options.models', function () {
     });
 
 });
-

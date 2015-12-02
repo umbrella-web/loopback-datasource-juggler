@@ -10,6 +10,10 @@ var Memory = require('../lib/connectors/memory');
 var ModelDefinition = require('../lib/model-definition');
 
 describe('ModelDefinition class', function () {
+  var memory;
+  beforeEach(function() {
+    memory = new DataSource({connector: Memory});
+  });
 
   it('should be able to define plain models', function (done) {
     var modelBuilder = new ModelBuilder();
@@ -36,9 +40,9 @@ describe('ModelDefinition class', function () {
     assert.equal(json.properties.approved.type, "Boolean");
     assert.equal(json.properties.joinedAt.type, "Date");
     assert.equal(json.properties.age.type, "Number");
-    
+
     assert.deepEqual(User.toJSON(), json);
-    
+
     done();
 
   });
@@ -55,7 +59,7 @@ describe('ModelDefinition class', function () {
     });
 
     User.build();
-    
+
     var json = User.toJSON();
 
     User.defineProperty("id", {type: "number", id: true});
@@ -64,12 +68,12 @@ describe('ModelDefinition class', function () {
     assert.equal(User.properties.approved.type, Boolean);
     assert.equal(User.properties.joinedAt.type, Date);
     assert.equal(User.properties.age.type, Number);
-    
+
     assert.equal(User.properties.id.type, Number);
-    
+
     json = User.toJSON();
     assert.deepEqual(json.properties.id, {type: 'Number', id: true});
-    
+
     done();
 
   });
@@ -253,7 +257,6 @@ describe('ModelDefinition class', function () {
   });
 
   it('should inherit prototype using option.base', function () {
-    var memory = new DataSource({connector: Memory});
     var modelBuilder = memory.modelBuilder;
     var parent = memory.createModel('parent', {}, {
       relations: {
@@ -273,7 +276,6 @@ describe('ModelDefinition class', function () {
   });
 
   it('should ignore inherited options.base', function() {
-    var memory = new DataSource({connector: Memory});
     var modelBuilder = memory.modelBuilder;
     var base = modelBuilder.define('base');
     var child = base.extend('child', {}, { base: 'base' });
@@ -283,7 +285,6 @@ describe('ModelDefinition class', function () {
   });
 
   it('should ignore inherited options.super', function() {
-    var memory = new DataSource({connector: Memory});
     var modelBuilder = memory.modelBuilder;
     var base = modelBuilder.define('base');
     var child = base.extend('child', {}, { super: 'base' });
@@ -292,8 +293,44 @@ describe('ModelDefinition class', function () {
     assert(grandChild.prototype instanceof child);
   });
 
+  it('should serialize protected properties into JSON', function() {
+    var modelBuilder = memory.modelBuilder;
+    var ProtectedModel = memory.createModel('protected', {}, {
+      protected: ['protectedProperty']
+    });
+    var pm = new ProtectedModel({
+      id: 1, foo: 'bar', protectedProperty: 'protected'
+    });
+    var serialized = pm.toJSON();
+    assert.deepEqual(serialized, {
+      id: 1, foo: 'bar', protectedProperty: 'protected'
+    });
+  });
+
+  it('should not serialize protected properties of nested models into JSON', function(done){
+    var modelBuilder = memory.modelBuilder;
+    var Parent = memory.createModel('parent');
+    var Child = memory.createModel('child', {}, {protected: ['protectedProperty']});
+    Parent.hasMany(Child);
+    Parent.create({
+      name: 'parent'
+    }, function(err, parent) {
+      parent.children.create({
+        name: 'child',
+        protectedProperty: 'protectedValue'
+      }, function(err, child) {
+        Parent.find({include: 'children'}, function(err, parents) {
+          var serialized = parents[0].toJSON();
+          var child = serialized.children[0];
+          assert.equal(child.name, 'child');
+          assert.notEqual(child.protectedProperty, 'protectedValue');
+          done();
+        });
+      });
+    });
+  });
+
   it('should not serialize hidden properties into JSON', function () {
-    var memory = new DataSource({connector: Memory});
     var modelBuilder = memory.modelBuilder;
     var HiddenModel = memory.createModel('hidden', {}, {
       hidden: ['secret']
@@ -311,7 +348,6 @@ describe('ModelDefinition class', function () {
   });
 
   it('should not serialize hidden properties of nested models into JSON', function (done) {
-    var memory = new DataSource({connector: Memory});
     var modelBuilder = memory.modelBuilder;
     var Parent = memory.createModel('parent');
     var Child = memory.createModel('child', {}, {hidden: ['secret']});
@@ -333,5 +369,69 @@ describe('ModelDefinition class', function () {
       });
     });
   });
-});
 
+  it('should report deprecation warning for property names containing dot', function() {
+    var message = 'deprecation not reported';
+    process.once('deprecation', function(err) { message = err.message; });
+
+    memory.createModel('Dotted', { 'dot.name': String });
+
+    message.should.match(/Dotted.*dot\.name/);
+  });
+
+  it('should report deprecation warning for dynamic property names containing dot', function(done) {
+    var message = 'deprecation not reported';
+    process.once('deprecation', function(err) { message = err.message; });
+
+    var Model = memory.createModel('DynamicDotted');
+    Model.create({ 'dot.name': 'dot.value' }, function(err) {
+      if (err) return done(err);
+      message.should.match(/Dotted.*dot\.name/);
+      done();
+    });
+  });
+
+  it('should support "array" type shortcut', function() {
+    var Model = memory.createModel('TwoArrays', {
+      regular: Array,
+      sugar: 'array'
+    });
+
+    var props = Model.definition.properties;
+    props.regular.type.should.equal(props.sugar.type);
+  });
+
+  context('hasPK', function() {
+    context('with primary key defined', function() {
+      var Todo;
+      before(function prepModel() {
+        Todo = new ModelDefinition(new ModelBuilder(), 'Todo', {
+          content: 'string'
+        });
+        Todo.defineProperty('id', {
+          type: 'number',
+          id: true
+        });
+        Todo.build();
+      });
+
+      it('should return true', function() {
+        Todo.hasPK().should.be.ok;
+      });
+    });
+
+    context('without primary key defined', function() {
+      var Todo;
+      before(function prepModel() {
+        Todo = new ModelDefinition(new ModelBuilder(), 'Todo', {
+          content: 'string'
+        });
+        Todo.build();
+      });
+
+      it('should return false', function() {
+        Todo.hasPK().should.not.be.ok;
+      });
+    });
+  });
+});
